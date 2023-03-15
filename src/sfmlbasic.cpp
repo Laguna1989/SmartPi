@@ -1,5 +1,6 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
+#include <stdexcept>
 #include <fstream>
 #include <vector>
 #include <string>
@@ -55,15 +56,15 @@ int main()
     sf::Texture texture;
     if (!texture.loadFromFile("idle_snowflake.png"))
     {
-        std::cout << "cannot load image!" << std::endl;
-        return 1;
+        throw std::logic_error{"cannot load image!"};
+
     }
     Animation anim;
     anim.setSpriteSheet(texture);
     for (int i = 0; i != 75;++i)
     {
-        int x = static_cast<int>(i%8);
-        int y = static_cast<int>(i/8);
+        int const x = static_cast<int>(i%8);
+        int const y = static_cast<int>(i/8);
         anim.addFrame(sf::IntRect(x*240,y*135,240,135));
     }
     AnimatedSprite animatedSprite(sf::seconds(0.10), false, true);
