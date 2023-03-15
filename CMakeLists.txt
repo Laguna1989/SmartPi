@@ -6,10 +6,5 @@ set(CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_STANDARD 14)
 set(CXX_STANDARD 14)
 
-file(GLOB_RECURSE ALLFILES CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/src/*)
-add_executable(SmartPi ${ALLFILES})
-target_link_libraries(SmartPi 
-    sfml-system
-    sfml-graphics
-    sfml-window
-    boost_date_time)
+set (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+add_subdirectory(src)
