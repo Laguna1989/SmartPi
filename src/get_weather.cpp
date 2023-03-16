@@ -1,5 +1,4 @@
 #include "get_weather.hpp"
-#include "json.hpp"
 #include <curl/curl.h>
 
 namespace {

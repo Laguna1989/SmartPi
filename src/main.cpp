@@ -10,9 +10,11 @@
 #include "AnimatedSprite.hpp"
 #include "Animation.hpp"
 #include "get_weather.hpp"
+#include "json.hpp"
 
 using namespace boost::gregorian;
 using namespace boost::posix_time;
+using nlohmann::json;
 
 std::string getDateTimeString()
 {
@@ -21,28 +23,6 @@ std::string getDateTimeString()
     return to_simple_string(now);
 }
 
-std::string weatherString;
-
-void getWeatherString()
-{
-    std::string command="~/projects/weather/weather.bsh";
-    system(command.c_str());
-    
-    std::ifstream in;
-    in.open("/home/pi/weather.dat");
-
-    std::string temp;
-    std::getline(in, temp);
-
-    std::string wind;
-    std::getline(in, wind);
-
-    std::string humi;
-    std::getline(in,humi);
-    
-
-    weatherString = "Temp: " + temp + "C  Wind: " + wind + "m/s  Luftfeuchte: " + humi + "%";
-}
 
 
 int main()
@@ -51,8 +31,6 @@ int main()
     sf::RenderWindow window(modes[0], "SmartPi", sf::Style::Fullscreen);
     window.setFramerateLimit(20);
     window.setVerticalSyncEnabled(false);
-
-    weatherString = "";
 
     sf::Clock clock;
     sf::Texture texture;
@@ -77,8 +55,6 @@ int main()
     double textTimer = 0.0;
     double weatherTimer = 5.0;
 
-    getWeatherString();
-
     sf::Font font;
     if (!font.loadFromFile("arcadeclassic.ttf"))
     {
@@ -96,6 +72,8 @@ int main()
     double oldTime = 0.0;
     double newTime = 0.0;
     newTime = clock.getElapsedTime().asSeconds();
+
+    std::string weather_string {""};
 
     // render loop
     while (window.isOpen())
@@ -120,7 +98,10 @@ int main()
         if (textTimer >= 0.7)
         {
             textTimer = 0;
-            std::string const str = getDateTimeString() + "\n" + get_weather();
+            weather_string = get_weather();
+            json j = json::parse(weather_string);
+            float t = j["hourly"]["temperature_2m"][0];
+            std::string const str = getDateTimeString() + "\nTemp: " + std::to_string(t);
             text.setString(str);
         }
 
@@ -128,7 +109,6 @@ int main()
         if(weatherTimer >= 5.0)
         {
             weatherTimer = 0.0;
-            getWeatherString();
         }
 
         window.clear();
