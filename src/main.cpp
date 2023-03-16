@@ -23,8 +23,6 @@ std::string getDateTimeString()
     return to_simple_string(now);
 }
 
-
-
 int main()
 {
     std::vector<sf::VideoMode> modes = sf::VideoMode::getFullscreenModes();
@@ -100,13 +98,15 @@ int main()
             textTimer = 0;
             weather_string = get_weather();
             json j = json::parse(weather_string);
-            float t = j["hourly"]["temperature_2m"][0];
+            auto j2 = j.at("hourly");
+            auto j3 = j2.at("temperature_2m");
+            float t = j3.at(0);
             std::string const str = getDateTimeString() + "\nTemp: " + std::to_string(t);
             text.setString(str);
         }
 
         weatherTimer += deltaT;
-        if(weatherTimer >= 5.0)
+        if(weatherTimer >= 1000.0)
         {
             weatherTimer = 0.0;
         }

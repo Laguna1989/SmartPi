@@ -18,7 +18,7 @@ std::string get_weather()
     std::string s;
     if(curl) {
         CURLcode res;
-        curl_easy_setopt(curl, CURLOPT_URL, "https://api.open-meteo.com/v1/forecast?latitude=49.466&longitude=11.00&current_weather=true");
+        curl_easy_setopt(curl, CURLOPT_URL, "https://api.open-meteo.com/v1/forecast?latitude=49.48&longitude=10.99&hourly=temperature_2m,relativehumidity_2m,precipitation&forecast_days=1&timezone=Europe%2FBerlin");
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, CurlWrite_CallbackFunc_StdString);
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, &s);
         res = curl_easy_perform(curl);
