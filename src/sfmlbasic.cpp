@@ -1,7 +1,6 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include <stdexcept>
-#include <curl/curl.h>
 #include <fstream>
 #include <vector>
 #include <string>
@@ -10,6 +9,7 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include "AnimatedSprite.hpp"
 #include "Animation.hpp"
+#include "get_weather.hpp"
 
 using namespace boost::gregorian;
 using namespace boost::posix_time;
@@ -44,28 +44,9 @@ void getWeatherString()
     weatherString = "Temp: " + temp + "C  Wind: " + wind + "m/s  Luftfeuchte: " + humi + "%";
 }
 
-size_t CurlWrite_CallbackFunc_StdString(void *contents, size_t size, size_t nmemb, std::string *s)
-{
-    size_t newLength = size*nmemb;
-        s->append((char*)contents, newLength);
-    return newLength;
-}
 
 int main()
 {
-
-    CURL *curl = curl_easy_init();
-    std::string s;
-    if(curl) {
-        CURLcode res;
-        curl_easy_setopt(curl, CURLOPT_URL, "https://api.open-meteo.com/v1/forecast?latitude=49.466&longitude=11.00&current_weather=true");
-        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, CurlWrite_CallbackFunc_StdString);
-        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &s);
-        res = curl_easy_perform(curl);
-        curl_easy_cleanup(curl);
-    }
-    std::cout << s << std::endl;
-
     std::vector<sf::VideoMode> modes = sf::VideoMode::getFullscreenModes();
     sf::RenderWindow window(modes[0], "SmartPi", sf::Style::Fullscreen);
     window.setFramerateLimit(20);
@@ -139,12 +120,12 @@ int main()
         if (textTimer >= 0.7)
         {
             textTimer = 0;
-            std::string const str = getDateTimeString() + "\n" + weatherString;
+            std::string const str = getDateTimeString() + "\n" + get_weather();
             text.setString(str);
         }
 
         weatherTimer += deltaT;
-        if(weatherTimer >= 100.0)
+        if(weatherTimer >= 5.0)
         {
             weatherTimer = 0.0;
             getWeatherString();
